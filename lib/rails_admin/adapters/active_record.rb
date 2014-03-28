@@ -18,7 +18,13 @@ module RailsAdmin
       end
 
       def scoped
-        model.all
+        model_config = RailsAdmin.config(model)
+        scope_name = model_config.list.scope
+        if scope_name && model.respond_to?(scope_name = scope_name.to_sym)
+          model.send scope_name
+        else
+          model.all
+        end
       end
 
       def first(options = {}, scope = nil)
